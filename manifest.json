@@ -1,0 +1,26 @@
+{
+  "short_name": "Mi Security Networks App",
+  "name": "Mi Security Networks App",
+  "icons": [
+    {
+      "src": "images/manifest0.png",
+      "type": "image/png",
+      "sizes": "250x250"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#008DDC",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#008DDC",
+  "shortcuts": [
+    {
+      "name": "Mi Security Networks App",
+      "short_name": "Mi Security Networks App",
+      "description": "Mi Security Networks App",
+      "url": "/",
+      "icons": [{ "src": "/images/manifest0.png", "sizes": "250x250" }]
+    }
+  ],
+  "description": "Mi Security Networks App"
+}
