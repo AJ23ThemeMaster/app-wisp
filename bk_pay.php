@@ -114,7 +114,6 @@
 
                     //AGREGAMOS A IP_AUTORIZADAS#
                     $API->comm("/ip/firewall/address-list/add", array(
-                        "address" => $ip,
                         "comment" => $servicio,
                         "list" => 'ips_autorizadas'
                         )
