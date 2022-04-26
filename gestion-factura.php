@@ -288,14 +288,14 @@
                                         <center>
                                             <hr>
                                             <form action="https://checkout.wompi.co/p/" method="GET" id="form-wompi" class="d-none">
-                                                <input type="hidden" name="public-key" value="<?=$public_key;?>" />
+                                                <input type="hidden" name="public-key" id="public_key_wompi" />
                                                 <input type="hidden" name="currency" value="COP" />
                                                 <input type="hidden" name="amount-in-cents" id="amount-in-cents" />
                                                 <input type="hidden" name="reference" id="reference"/>
-                                                <input type="hidden" name="redirect-url" value="<?=$redirect;?>" />
+                                                <input type="hidden" name="redirect-url" id="redirect_url_wompi" />
                                                 <button class="btn btn-success" type="submit">Pagar con Wompi</button>
                                             </form>
-                                            <button class="btn btn-success" onclick="confirmar('form-wompi');">Pagar con Wompi</button>
+                                            <button class="btn btn-success" onclick="confirmar('form-wompi');" id="btn_wompi">Pagar con Wompi</button>
                                         </center>
                                     </main>
                                 </div>
@@ -306,7 +306,7 @@
                 </div>
             </div>
         </div>
-        
+
         <script src="vendors/js/vendor.bundle.base.js"></script>
         <script src="vendors/chart.js/Chart.min.js"></script>
         <script src="vendors/datatables.net/jquery.dataTables.js"></script>
@@ -319,7 +319,7 @@
         <script src="js/todolist.js"></script>
         <script src="js/dashboard.js"></script>
         <script src="js/Chart.roundedBarCharts.js"></script>
-  
+
         <script type="text/javascript">
             $('#printInvoice').click(function(){
                 Popup($('.invoice')[0].outerHTML);
@@ -328,7 +328,7 @@
                     return true;
                 }
             });
-            
+
             $(document).ready(function(){
                 var id_cliente = <?=$cliente;?>;
                 $.ajax({
@@ -344,7 +344,7 @@
                             document.getElementById('clientedireccion').innerHTML = data.cliente.direccion;
                             document.getElementById('clienteemail').innerHTML     = data.cliente.email;
                             document.getElementById('clientecelular').innerHTML   = data.cliente.celular;
-                            
+
                             document.getElementById('facturacodigo').innerHTML      = data.factura.codigo;
                             document.getElementById('facturafecha').innerHTML       = data.factura.fecha;
                             document.getElementById('facturavencimiento').innerHTML = data.factura.vencimiento;
@@ -353,17 +353,26 @@
                             document.getElementById('facturaprecio').innerHTML      = number_format(data.plan.precio, '2', ',', '.');
                             document.getElementById('facturaimpuesto').innerHTML    = data.factura.impuesto;
                             document.getElementById('facturatotal').innerHTML       = number_format(((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio), '2', ',', '.');
-                            
+
                             document.getElementById('porcentaje').innerHTML  = data.factura.impuesto;
                             document.getElementById('subtotal').innerHTML    = number_format(data.plan.precio, '2', ',', '.');
                             document.getElementById('impuesto').innerHTML    = number_format(((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100), '2', ',', '.');
                             document.getElementById('total').innerHTML       = number_format(((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio), '2', ',', '.');
-                            
+
                             $("#reference").val('<?=$nom_empresa;?>-'+data.factura.codigo);
                             $("#amount-in-cents").val(((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio)+'00');
                         }else{
                             $("#invoice").html('').html('<div class="row"><div class="col-md-6 offset-md-3 mb-4 stretch-card transparent"><div class="card card-dark-blue"><div class="card-body text-center"><p class="fs-20 mb-2" style="font-size: 1.5em!important;">NO POSEE NINGUNA FACTURA GENERADA</p></div></div></div></div>');
                             $("#invoice").removeClass('d-none');
+                        }
+
+                        if(data.pasarelas){
+                            if(data.pasarelas.nombre == 'WOMPI'){
+                                $("#public_key_wompi").val(data.pasarelas.api_key);
+                            }
+                            $("#redirect_url_wompi").val('https://'+window.location.hostname);
+                        }else{
+                            $("#btn_wompi").addClass('d-none');
                         }
                     }
                 });
