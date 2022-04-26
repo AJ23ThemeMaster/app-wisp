@@ -370,7 +370,7 @@
                             if(data.pasarelas.nombre == 'WOMPI'){
                                 $("#public_key_wompi").val(data.pasarelas.api_key);
                             }
-                            $("#redirect_url_wompi").val('https://'+window.location.hostname);
+                            $("#redirect_url_wompi").val('https://'+window.location.hostname+'/wompi.php');
                         }else{
                             $("#btn_wompi").addClass('d-none');
                         }
