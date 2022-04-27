@@ -35,6 +35,11 @@
         $estatus = $assoc_f['estatus'];
         
         if($estatus == 1){
+            //BANCO
+            $query = "SELECT * FROM bancos WHERE nombre = 'WOMPI' AND estatus = 1 AND lectura = 1";
+            $banco = mysqli_fetch_assoc(mysqli_query($con, $query));
+            $banco = $banco['id'];
+
             //CONSECUTIVO DE CAJA
             $query = "SELECT nro FROM ingresos WHERE empresa = 1 ORDER BY id DESC LIMIT 1";
             $result_query = mysqli_query($con,$query);
@@ -43,7 +48,7 @@
             $nro++;
             
             //REGISTRO DEL INGRESO
-            $query = "INSERT INTO ingresos (nro, empresa, cliente, cuenta, metodo_pago, fecha, observaciones, tipo, estatus) VALUES ('$nro', '1', '$cliente', '3', '9', '$fecha', 'Pago Wompi ID: $transactionId', '1', '1')";
+            $query = "INSERT INTO ingresos (nro, empresa, cliente, cuenta, metodo_pago, fecha, observaciones, tipo, estatus) VALUES ('$nro', '1', '$cliente', '$banco', '9', '$fecha', 'Pago Wompi ID: $transactionId', '1', '1')";
             mysqli_query($con,$query);
             
             $query = "SELECT MAX(id) AS id FROM ingresos";
@@ -61,7 +66,7 @@
             mysqli_query($con,$query);
             
             //ASENTAMOS EL MOVIMIENTO DE INGRESO
-            $query = "INSERT INTO movimientos (empresa, banco, contacto, tipo, saldo, fecha, modulo, id_modulo, descripcion) VALUES ('1', '3', '$cliente', '1', '$saldo', '$fecha', '1', '$id_ingreso', '$id_ingreso')";
+            $query = "INSERT INTO movimientos (empresa, banco, contacto, tipo, saldo, fecha, modulo, id_modulo, descripcion) VALUES ('1', '$banco', '$cliente', '1', '$saldo', '$fecha', '1', '$id_ingreso', '$id_ingreso')";
             mysqli_query($con,$query);
             
             //ACTUALIZAMOS LA FACTURA
