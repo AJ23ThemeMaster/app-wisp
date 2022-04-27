@@ -6,7 +6,7 @@
 
     $con      = mysqli_connect($host,$username,$password,$db);
 
-    ##
+    ## EMPRESA ##
 
     $sql = "SELECT * FROM empresas WHERE id = '1'";
     $empresa = mysqli_fetch_assoc(mysqli_query($con, $sql));
@@ -20,7 +20,17 @@
 
     $empresa      = '<div>NIT '.$empresa['nit'].'-'.$empresa['dv'].'</div><div>'.$empresa['direccion'].'</div><div>'.$empresa['telefono'].'</div><div>'.$empresa['email'].'</div>';
 
-    ##
+    ## EMPRESA ##
+
+    ## INTEGRACIONES ##
+
+    $sql = "SELECT * FROM integracion WHERE tipo = 'SMS' AND lectura = '1' AND status = '1'";
+    $sms = mysqli_fetch_assoc(mysqli_query($con, $sql));
+
+    $sms_login     = $empresa['user'];
+    $sms_password  = $empresa['pass'];
+
+    ## INTEGRACIONES ##
 
     $seccion       = 'Dashboard';
 
@@ -30,7 +40,4 @@
 
     $whatsapp      = '';
     $speedtest     = '';
-
-    $sms_login     = '';
-    $sms_password  = '';
 ?>
