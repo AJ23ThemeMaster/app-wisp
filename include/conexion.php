@@ -27,8 +27,8 @@
     $sql = "SELECT * FROM integracion WHERE tipo = 'SMS' AND lectura = '1' AND status = '1'";
     $sms = mysqli_fetch_assoc(mysqli_query($con, $sql));
 
-    $sms_login     = $empresa['user'];
-    $sms_password  = $empresa['pass'];
+    $sms_login     = $sms['user'];
+    $sms_password  = $sms['pass'];
 
     ## INTEGRACIONES ##
 
