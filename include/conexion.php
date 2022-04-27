@@ -18,7 +18,7 @@
     $img_logo     = 'https://'.$_SERVER['HTTP_HOST'].'/images/logo.png';
     $redirect     = 'https://'.$_SERVER['HTTP_HOST'].'/wompi.php';
 
-    $empresa      = '<div>NIT '.$empresa['nit'].'-'.$empresa['dv'].'</div><div>'.$empresa['direccion'].'</div><div>'.$empresa['telefono'].'</div><div>'.$empresa['email'].'</div>';
+    $empresa      = '<div>NIT '.$empresa['nit'].'-'.$empresa['dv'].'</div><div>'.utf8_encode($empresa['direccion']).'</div><div>'.$empresa['telefono'].'</div><div>'.$empresa['email'].'</div>';
 
     ## EMPRESA ##
 
