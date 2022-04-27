@@ -1,27 +1,36 @@
 <?php
     $host     = "localhost";
-    $username = "root";
-    $db       = "istingen_root";
-    $password = "";
-    
-    $con      = mysqli_connect($host,$username,$password,$db); 
-    $title    = 'Mi Security Networks App';
-    $title_corto = 'APP IPS';
-    $seccion  = 'Dashboard';
-    $empresa  = '<div>NIT 901504547-9</div><div>BRR BOCAGRANDE CR 5 4 24 AP 203, Cartagena, Bolivar</div><div>+57 3152876717</div><div>info@securitynetworks.online</div>';
-    $name_empresa = 'International Security Networks S.A.S';
-    
-    $sms_login ="jjtuiran2021";
-    $sms_password = 'Bstc2710';
-    
-    $empresa_email = 'noreply@securitynetworks.online';
-    $email_pass = 'security9_root';
-    
-    $public_key = '';
-    $color = '#008DDC';
-    $img_logo = 'https://app.securitynetworks.online/images/logo.png';
-    $whatsapp = '573152876717';
-    $speedtest = '';
-    $nom_empresa = 'IST';
-    $redirect = 'https://app.istingenieria.online/wompi.php';
+    $username = "networks_root";
+    $db       = "networks_root";
+    $password = "networks_root";
+
+    $con      = mysqli_connect($host,$username,$password,$db);
+
+    ##
+
+    $sql = "SELECT * FROM empresas WHERE id = '1'";
+    $empresa = mysqli_fetch_assoc(mysqli_query($con, $sql));
+
+    $name_empresa = $empresa['nombre'];
+    $color        = $empresa['color'];
+    $title        = $empresa['nombre_app'];
+    $title_corto  = $empresa['nombre_app'];
+    $img_logo     = 'https://'.$_SERVER['HTTP_HOST'].'/images/logo.png';
+    $redirect     = 'https://'.$_SERVER['HTTP_HOST'].'/wompi.php';
+
+    $empresa      = '<div>NIT '.$empresa['nit'].'-'.$empresa['dv'].'</div><div>'.$empresa['direccion'].'</div><div>'.$empresa['telefono'].'</div><div>'.$empresa['email'].'</div>';
+
+    ##
+
+    $seccion       = 'Dashboard';
+
+    $empresa_email = 'info@networksoft.online';
+    $email_pass    = 'networks_root';
+    $nom_empresa   = 'NET';
+
+    $whatsapp      = '';
+    $speedtest     = '';
+
+    $sms_login     = '';
+    $sms_password  = '';
 ?>
