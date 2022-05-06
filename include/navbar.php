@@ -1,3 +1,11 @@
+<?php
+    include "include/conexion.php";
+
+    $sql = "SELECT * FROM empresas WHERE id = '1'";
+    $query = mysqli_fetch_assoc(mysqli_query($con, $sql));
+    $actualizar = $query['datos_app'];
+?>
+
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
     <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
         <a class="navbar-brand brand-logo mr-5" href="./"><img src="images/logo.png" class="mr-2" alt="logo"/></a>
@@ -22,10 +30,15 @@
         <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                    <b><?= $nombre; ?></b>
+                    <b><?= utf8_encode($nombre); ?></b>
                     <img src="./images/no-user-image.png" alt="profile"/>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                    <?php
+                        if($actualizar){
+                        echo '<a class="dropdown-item" href="gestion-usuario.php"><i class="fas fa-user-edit text-primary"></i>Actualizar Datos</a>';
+                        }
+                    ?>
                     <a class="dropdown-item" href="logout.php">
                         <i class="fas fa-power-off text-primary"></i>
                         Cerrar Sesión
