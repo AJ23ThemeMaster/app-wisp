@@ -28,12 +28,38 @@
     .my-float{
         margin-top:16px;
     }
+    .call{
+        position:fixed;
+        width:60px;
+        height:60px;
+        bottom:95px;
+        left:25px;
+        background-color: <?=$color;?>;
+        color:#FFF;
+        border-radius:50px;
+        text-align:center;
+        font-size:30px;
+        box-shadow: 2px 2px 3px #999;
+        z-index:1000;
+    }
+    .call:hover {
+        text-decoration: none;
+        color: white;
+        background-color: #333;
+    }
+    .my-call{
+        margin-top:16px;
+    }
 </style>
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
 <a href="https://wa.me/<?= $whatsapp;?>" class="float" target="_blank">
     <i class="fa fa-whatsapp my-float"></i>
+</a>
+
+<a href="tel:<?= $telefono;?>" class="call" target="_blank">
+    <i class="fa fa-phone my-call"></i>
 </a>
 
 <script>
