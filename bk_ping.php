@@ -1,11 +1,4 @@
 <?php
-    $json['success'] = 'false';
-    $json['radicado']= 'true';
-    $json['title']   = mb_strtoupper('Usted no cuenta con servicio de internet llame a la oficina.');
-    $json['icon']    = 'error';
-    echo json_encode($json);
-    exit;
-
     if ((isset($_POST['id_cliente']) && !empty($_POST['id_cliente']))) {
         if ($_SERVER['REQUEST_METHOD'] == "POST") {
             include "include/conexion.php";
