@@ -70,14 +70,18 @@
             dataType: 'JSON',
             success : function(data){
                 cargando(false);
-                Swal.fire({
-                    title: data.title,
-                    icon: data.icon,
-                    showCancelButton: false,
-                    showConfirmButton: false,
-                    cancelButtonColor: '#d33',
-                    cancelButtonText: 'Aceptar'
-                });
+                if(data.radicado){
+                    $("#modal_radicado").modal('show');
+                }else{
+                    Swal.fire({
+                        title: data.title,
+                        icon: data.icon,
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                        cancelButtonColor: '#d33',
+                        cancelButtonText: 'Aceptar'
+                    });
+                }
             }
         });
         return false;

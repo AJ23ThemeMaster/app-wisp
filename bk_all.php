@@ -11,9 +11,9 @@
         $cliente = "SELECT c.nombre, c.nit, c.direccion, c.celular, c.email FROM contactos AS c WHERE c.id = '$id_cliente'";
         $wifi = "SELECT * FROM wifi WHERE id_cliente = '$id_cliente' ORDER BY id DESC";
         $red = "SELECT * FROM wifi WHERE id_cliente = '$id_cliente' AND status = 0 ORDER BY id DESC";
-        //$mikrotik = "SELECT nombre, ip, puerto_web, puerto_api, usuario, clave FROM mikrotik WHERE id = 4";
         $factura = "SELECT F.*, I.precio, I.impuesto, I.cant, I.ref FROM factura AS F JOIN items_factura AS I ON F.id = I.factura WHERE F.cliente = '$id_cliente' AND F.estatus = 1 ORDER BY F.id DESC LIMIT 1";
         $planes = "SELECT id, name, price, download, upload FROM planes_velocidad";
+        $radicados = "SELECT * FROM radicados WHERE cliente = '$id_cliente' ORDER BY id DESC LIMIT 1";
 
         $pasarelas = "SELECT * FROM integracion WHERE tipo = 'PASARELA' AND status = 1 AND app = 1";
 
@@ -25,7 +25,7 @@
         $resultf = mysqli_fetch_assoc(mysqli_query($con, $factura));
         $resultps = mysqli_query($con, $planes);
         $resultpa = mysqli_fetch_assoc(mysqli_query($con, $pasarelas));
-        //$resultk = mysqli_fetch_assoc(mysqli_query($con, $mikrotik));
+        $resultra = mysqli_fetch_assoc(mysqli_query($con, $radicados));
 
         if($resultp && $resultc){
             $json['success'] = 'true';
@@ -37,7 +37,7 @@
             $json['wifi'] = (is_array($resultw)) ? array_map("utf8_encode", $resultw) : false;
             $json['red'] = (is_array($resultr)) ? array_map("utf8_encode", $resultr) : false;
             $json['factura'] = (is_array($resultf)) ? array_map("utf8_encode", $resultf) : false;
-            //$json['mikrotik'] = array_map("utf8_encode", $resultk);
+            $json['radicados'] = (is_array($resultra)) ? array_map("utf8_encode", $resultra) : false;
             echo json_encode($json);
             exit;
         }else{
