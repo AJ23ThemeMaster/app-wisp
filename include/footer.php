@@ -53,14 +53,17 @@
 </style>
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<?php
+    if($whatsapp){
+        echo '<a href="https://wa.me/'.$whatsapp.'" class="float" target="_blank"><i class="fa fa-whatsapp my-float"></i></a>';
+    }
+?>
 
-<a href="https://wa.me/<?= $whatsapp;?>" class="float" target="_blank">
-    <i class="fa fa-whatsapp my-float"></i>
-</a>
-
-<a href="tel:<?= $telefono;?>" class="call" target="_blank">
-    <i class="fa fa-phone my-call"></i>
-</a>
+<?php
+    if($telefono){
+        echo '<a href="tel:'.$telefono.'" class="call" target="_blank"><i class="fa fa-phone my-call"></i></a>';
+    }
+?>
 
 <script>
     function number_format (number, decimals, dec_point, thousands_sep) {
