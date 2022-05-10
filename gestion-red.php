@@ -80,6 +80,16 @@
                 <div class="main-panel">
                     <div class="content-wrapper">
                         <div class="row">
+                            <div class="col-md-4 mb-4 stretch-card transparent d-none" id="div_red">
+                                <a href="javascript:void();" data-toggle="modal" data-target="#modal_red" class="speed text-center" id="btn_red">
+                                    <div class="card card-dark-blue">
+                                        <div class="card-body text-center">
+                                            <p class="fs-20 mb-2" style="font-size: 1.5em!important;">VER DETALLES RED WIFI</p>
+                                            <i class="fas fa-wifi fa-5x"></i>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
                             <div class="col-md-4 mb-4 offset-md-2 stretch-card transparent" id="div_wifi">
                                 <a href="javascript:void();" data-toggle="modal" data-target="#modal_wifi" class="speed text-center" id="btn_wifi">
                                     <div class="card card-dark-blue">
@@ -291,6 +301,58 @@
                         </div>
                     </div>
 
+                    <div class="modal fade" id="modal_red" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" style="font-weight: bold;">RED WIFI</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body p-0">
+                                    <div class="row">
+                                        <div class="col-md-12 stretch-card">
+                                            <div class="card">
+                                                <div class="card-body" style="padding: 3%;">
+                                                    <div class="row">
+                                                        <div class="col-3 text-center" style="border: solid <?= $color;?> 1px;border-radius: 10px 0 0 10px;padding: 1%;">
+                                                            <label class="text-uppercase">IP</label>
+                                                            <p>
+                                                                <span class="ml-2" id="red_IP"></span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-3 text-center" style="border: solid <?= $color;?> 1px;padding: 1%;">
+                                                            <label class="text-uppercase">Red Oculta</label>
+                                                            <p>
+                                                                <span class="ml-2" id="red_Oculta"></span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-3 text-center" style="border: solid <?= $color;?> 1px;padding: 1%;">
+                                                            <label class="text-uppercase">Nombre de Red</label>
+                                                            <p>
+                                                                <span class="ml-2" id="red_Nombre"></span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-3 text-center" style="border: solid <?= $color;?> 1px;border-radius: 0 10px 10px 0;padding: 1%;">
+                                                            <label class="text-uppercase">Clave de Red</label>
+                                                            <p>
+                                                                <span class="ml-2" id="red_Clave"></span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <?php include('include/footer.php'); ?>
                 </div>
             </div>
@@ -352,6 +414,19 @@
                         $("#contrato_radi").val(data.contrato.id);
                         $("#ip_radi").val(data.contrato.ip);
                         $("#mac_radi").val(data.contrato.mac_address);
+
+                        if(data.red){
+                            $("#div_red").removeClass('d-none');
+                            $("#div_wifi").removeClass('offset-md-2');
+                            $("#red_IP").text(data.wifi.ip);
+                            $("#red_Nombre").text(data.wifi.red_nueva);
+                            $("#red_Clave").text(data.wifi.pass_nueva);
+                            if(data.wifi.oculta == 0){
+                                $("#red_Oculta").text('NO');
+                            }else{
+                                $("#red_Oculta").text('SI');
+                            }
+                        }
 
                         if(data.radicados){
                             $("#div_radicados").removeClass('d-none');
