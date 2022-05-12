@@ -15,6 +15,7 @@
         $sms_login     = $sms['user'];
         $sms_password  = $sms['pass'];
         $sms_api_key   = $sms['api_key'];
+        $sms_proveedor = $sms['nombre'];
         
         if (isset($_POST['user-checkbox']) && $_POST['user-checkbox'] == '1')
             $marketing = 1;
