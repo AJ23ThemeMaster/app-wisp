@@ -14,7 +14,7 @@
 
         $sms_login     = $sms['user'];
         $sms_password  = $sms['pass'];
-        $sms_proveedor = $sms['nombre'];
+        $sms_api_key   = $sms['api_key'];
         
         if (isset($_POST['user-checkbox']) && $_POST['user-checkbox'] == '1')
             $marketing = 1;
@@ -223,9 +223,9 @@
                             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                             CURLOPT_CUSTOMREQUEST => 'POST',CURLOPT_POSTFIELDS => json_encode($post),
                             CURLOPT_HTTPHEADER => array(
-                                'account: '.$servicio->user,
-                                'apiKey: '.$servicio->api_key,
-                                'token: '.$servicio->pass,
+                                'account: '.$sms_login,
+                                'apiKey: '.$sms_api_key,
+                                'token: '.$sms_password,
                                 'Content-Type: application/json'
                             ),
                         ));
