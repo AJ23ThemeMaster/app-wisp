@@ -99,7 +99,7 @@
             dataType: 'JSON',
             success : function(data){
                 cargando(false);
-                if(data.radicado){
+                if(data.radicado == true){
                     $("#modal_radicado").modal('show');
                 }else{
                     Swal.fire({
