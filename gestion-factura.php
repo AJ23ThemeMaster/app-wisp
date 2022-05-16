@@ -295,7 +295,28 @@
                                                 <input type="hidden" name="redirect-url" id="redirect_url_wompi" />
                                                 <button class="btn btn-success" type="submit">Pagar con Wompi</button>
                                             </form>
-                                            <button class="btn btn-success" onclick="confirmar('form-wompi');" id="btn_wompi">Pagar con Wompi</button>
+                                            <button class="btn btn-success d-none" onclick="confirmar('form-wompi', 'WOMPI');" id="btn_wompi">Pagar con Wompi</button>
+
+                                            <form method="post" action="https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/" id="form-payu" class="d-none">
+                                                <input id="merchantId"      name="merchantId"      type="hidden"  value="">
+                                                <input id="accountId"       name="accountId"       type="hidden"  value="">
+                                                <input id="description"     name="description"     type="hidden"  value="">
+                                                <input id="referenceCode"   name="referenceCode"   type="hidden"  value="">
+                                                <input id="amount"          name="amount"          type="hidden"  value="">
+                                                <input id="tax"             name="tax"             type="hidden"  value="0">
+                                                <input id="taxReturnBase"   name="taxReturnBase"   type="hidden"  value="0">
+                                                <input id="currency"        name="currency"        type="hidden"  value="COP">
+                                                <input id="signature"       name="signature"       type="hidden"  value="">
+                                                <input id="test"            name="test"            type="hidden"  value="1">
+                                                <input id="buyerFullName"   name="buyerFullName"   type="hidden"  value="">
+                                                <input id="telephone"       name="telephone"       type="hidden"  value="">
+                                                <input id="buyerEmail"      name="buyerEmail"      type="hidden"  value="">
+                                                <input id="responseUrl"     name="responseUrl"     type="hidden"  value="">
+                                                <input id="confirmationUrl" name="confirmationUrl" type="hidden"  value="">
+                                                <input name="Submit"          type="submit"  value="Enviar">
+                                            </form>
+                                            <button class="btn btn-success d-none" onclick="confirmar('form-payu', 'PayU');" id="btn_payu">Pagar con PayU</button>
+
                                         </center>
                                     </main>
                                 </div>
@@ -319,6 +340,7 @@
         <script src="js/todolist.js"></script>
         <script src="js/dashboard.js"></script>
         <script src="js/Chart.roundedBarCharts.js"></script>
+        <script src="js/jquery.md5.js"></script>
 
         <script type="text/javascript">
             $('#printInvoice').click(function(){
@@ -366,23 +388,38 @@
                             $("#invoice").removeClass('d-none');
                         }
 
-                        if(data.pasarelas){
-                            if(data.pasarelas.nombre == 'WOMPI'){
-                                $("#public_key_wompi").val(data.pasarelas.api_key);
+                        $.each(data.pasarelas, function(index, value){
+                            if(value.nombre == 'WOMPI'){
+                                $("#public_key_wompi").val(value.api_key);
+                                $("#redirect_url_wompi").val('https://'+window.location.hostname+'/wompi.php');
+                                $("#btn_wompi").removeClass('d-none');
+                            }else if(value.nombre == 'PayU'){
+                                $("#merchantId").val(value.merchantId);
+                                $("#accountId").val(value.accountId);
+                                $("#description").val('Factura '+data.factura.codigo);
+                                $("#referenceCode").val('<?=$nom_empresa;?>-'+data.factura.codigo);
+                                $("#amount").val(data.factura.precio*1);
+                                $("#tax").val(number_format(((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100), '2', '.', ''));
+                                $("#buyerFullName").val(data.cliente.nombre);
+                                $("#buyerEmail").val(data.cliente.email);
+                                $("#telephone").val(data.cliente.celular);
+                                $("#responseUrl").val('https://'+window.location.hostname+'/wompi.php');
+                                var str = window.location.hostname;
+                                $("#confirmationUrl").val('https://'+str.slice(4)+'/software/api/pagos/payu');
+                                $("#btn_payu").removeClass('d-none');
+                                //var md5 = $.md5('value');
+                                $("#signature").val($.md5(value.api_key+"~"+value.merchantId+"~<?=$nom_empresa;?>-"+data.factura.codigo+"~"+data.factura.precio*1+"~COP"));
                             }
-                            $("#redirect_url_wompi").val('https://'+window.location.hostname+'/wompi.php');
-                        }else{
-                            $("#btn_wompi").addClass('d-none');
-                        }
+                        });
                     }
                 });
                 return false;
             });
-            
-            function confirmar(form, mensaje="Será redireccionado a la pasarela de pago WOMPI", submensaje='¿Desea continuar?'){
+
+            function confirmar(form, mensaje, submensaje='¿Desea continuar?'){
                 Swal.fire({
                     icon: 'question',
-                    title: mensaje,
+                    title: 'Será redireccionado a la pasarela de pago '+mensaje,
                     text: submensaje,
                     confirmButtonText: 'Aceptar',
                     cancelButtonText: 'Cancelar',

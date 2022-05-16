@@ -15,7 +15,11 @@
         $planes = "SELECT id, name, price, download, upload FROM planes_velocidad";
         $radicados = "SELECT * FROM radicados WHERE cliente = '$id_cliente' ORDER BY id DESC LIMIT 1";
 
-        $pasarelas = "SELECT * FROM integracion WHERE tipo = 'PASARELA' AND status = 1 AND app = 1";
+        $pasarelas = mysqli_query($con, "SELECT * FROM integracion WHERE tipo = 'PASARELA' AND status = 1 AND app = 1");
+        $rows = array();
+        while($r = mysqli_fetch_assoc($pasarelas)) {
+            $resultpa[] = $r;
+        }
 
         $resultp = mysqli_fetch_assoc(mysqli_query($con, $plan));
         $resultc = mysqli_fetch_assoc(mysqli_query($con, $contrato));
@@ -24,14 +28,14 @@
         $resultr = mysqli_fetch_assoc(mysqli_query($con, $red));
         $resultf = mysqli_fetch_assoc(mysqli_query($con, $factura));
         $resultps = mysqli_query($con, $planes);
-        $resultpa = mysqli_fetch_assoc(mysqli_query($con, $pasarelas));
+        //$resultpa = mysqli_fetch_assoc(mysqli_query($con, $pasarelas));
         $resultra = mysqli_fetch_assoc(mysqli_query($con, $radicados));
 
         if($resultp && $resultc){
             $json['success'] = 'true';
             $json['plan']    = (is_array($resultp)) ? array_map("utf8_encode", $resultp) : false;
             $json['planes']    = $resultps;
-            $json['pasarelas']    = (is_array($resultpa)) ? array_map("utf8_encode", $resultpa) : false;
+            $json['pasarelas']    = $resultpa;
             $json['contrato'] = (is_array($resultc)) ? array_map("utf8_encode", $resultc) : false;
             $json['cliente'] = (is_array($resultcl)) ? array_map("utf8_encode", $resultcl) : false;
             $json['wifi'] = (is_array($resultw)) ? array_map("utf8_encode", $resultw) : false;
