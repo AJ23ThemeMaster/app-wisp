@@ -9,6 +9,38 @@
         $assoc_cliente  = mysqli_fetch_assoc($result_cliente);
         $cliente        = $assoc_cliente['id_cliente'];
         $nombre         = $assoc_cliente['nombre'];
+        
+        $pasarelas = "SELECT * FROM integracion WHERE tipo = 'PASARELA' AND status = 1 AND app = 1 AND nombre = 'PayU'";
+        $pasarela = mysqli_fetch_assoc(mysqli_query($con, $pasarelas));
+        
+        $ApiKey           = $pasarela['api_key'];
+        $merchant_id      = $_REQUEST['merchantId'];
+        $referenceCode    = $_REQUEST['referenceCode'];
+        $TX_VALUE         = $_REQUEST['TX_VALUE'];
+        $New_value        = number_format($TX_VALUE, 1, '.', '');
+        $currency         = $_REQUEST['currency'];
+        $transactionState = $_REQUEST['transactionState'];
+        $firma_cadena     = "$ApiKey~$merchant_id~$referenceCode~$New_value~$currency~$transactionState";
+        $firmacreada      = md5($firma_cadena);
+        $firma            = $_REQUEST['signature'];
+        $reference_pol    = $_REQUEST['reference_pol'];
+        $cus              = $_REQUEST['cus'];
+        $extra1           = $_REQUEST['description'];
+        $pseBank          = $_REQUEST['pseBank'];
+        $lapPaymentMethod = $_REQUEST['lapPaymentMethod'];
+        $transactionId    = $_REQUEST['transactionId'];
+        
+        if ($_REQUEST['transactionState'] == 4 ) {
+            $estadoTx = "TRANSACCIÓN APROBADA";
+        }else if ($_REQUEST['transactionState'] == 6 ) {
+            $estadoTx = "TRANSACCIÓN RECHAZADA";
+        }else if ($_REQUEST['transactionState'] == 104 ) {
+            $estadoTx = "ERROR";
+        }else if ($_REQUEST['transactionState'] == 7 ) {
+            $estadoTx = "PAGO PENDIENTE";
+        }else {
+            $estadoTx=$_REQUEST['mensaje'];
+        }
     }else{
         header("Location: ./");
     }
@@ -215,34 +247,58 @@
                                 <div class="card-body">
                                     <div class="row justify-content-center" id="form-factura">
                                         <div class="col-lg-12 text-center" data-aos="fade-up" data-aos-delay="00">
-                                            <h2 class="text-primary font-extra">Respuesta de la Transacción</h2>
+                                            <h2 class="text-primary font-extra mb-3">Respuesta de la Transacción</h2>
                                         </div>
                                     </div>
-
                                     <div class="row">
                                         <div class="col-md-8 offset-md-2">
+                                            <?php if (strtoupper($firma) == strtoupper($firmacreada)) { ?>
                                             <div class="table-responsive">
                                                 <table class="table table-bordered">
                                                     <tbody>
                                                         <tr>
-                                                            <td class="bold w-50">Factura Nro</td>
-                                                            <td class="w-50" id="referencia"></td>
+                                                            <td class="font-weight-bold w-50">Factura Nro</td>
+                                                            <td class="w-50"><?php echo substr($referenceCode,4); ?></td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="bold w-50">Monto</td>
-                                                            <td class="w-50" id="monto"></td>
+                                                            <td class="font-weight-bold w-50">Monto</td>
+                                                            <td class="w-50"><?php echo $currency; ?> <?php echo number_format($TX_VALUE); ?></td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="bold w-50">Descripción</td>
-                                                            <td class="w-50" class="">Pago de Factura</td>
+                                                            <td class="font-weight-bold w-50">Descripción</td>
+                                                            <td class="w-50"><?php echo ($extra1); ?></td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="bold w-50">Status</td>
-                                                            <td class="w-50" class="" id="status"></td>
+                                                            <td class="font-weight-bold w-50">ID de la transacción</td>
+                                                            <td class="w-50"><?php echo $transactionId; ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="font-weight-bold w-50">Referencia de venta</td>
+                                                            <td><?php echo $reference_pol; ?></td>
+                                                        </tr>
+                                                        <?php if($pseBank != null) { ?>
+                                                        <tr>
+                                                            <td class="font-weight-bold w-50">cus</td>
+                                                            <td><?php echo $cus; ?> </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="font-weight-bold w-50">Banco</td>
+                                                            <td><?php echo $pseBank; ?> </td>
+                                                        </tr>
+                                                        <?php } ?>
+                                                        <tr>
+                                                            <td class="font-weight-bold w-50">Estado de la transacción</td>
+                                                            <td class="w-50"><?php echo $estadoTx; ?></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <?php }else{ ?>
+                                            <div class="text-center mt-3">
+                                                <h3 class="text-uppercase mb-2">Error validando la firma digital.</h3>
+                                                <h3>Por favor comuníquese con la administración de <?=$name_empresa;?></h3>
+                                            </div>
+                                            <?php } ?>
                                         </div>
                                     </div>
                                 </div>
@@ -269,111 +325,57 @@
 
         <script type="text/javascript">
             $(document).ready(function(){
-                cargando(true);
-                wompi = 'https://production.wompi.co/v1/transactions/<?=$_GET['id'];?>';
-                $.ajax({
-                    url: wompi,
-                    dataType: 'json',
-                    success: function(data) {
-                        console.log(data);
-                        var theDiv = document.getElementById("monto");
-                        var content = document.createTextNode(data.data.amount_in_cents/100+" COP");
-                        theDiv.appendChild(content);
+                <?php if (strtoupper($firma) == strtoupper($firmacreada)) { ?>
+                    <?php if ($_REQUEST['transactionState'] == 4) { ?>
+                        cargando(true);
+                        var reference = '<?php echo substr($referenceCode,4); ?>';
+                        var saldo = '<?php echo $TX_VALUE*1; ?>';
+                        var transactionId = '<?php echo $transactionId; ?>';
+                        var status = '<?php echo $_REQUEST['transactionState'];?>';
 
-                        if(data.data.status == "APPROVED"){
-                            var theDiv2 = document.getElementById("status");
-                            var content2 = document.createTextNode("Aprobada");
-                            theDiv2.appendChild(content2);
-                        }else if(data.data.status == "VOIDED"){
-                            var theDiv2 = document.getElementById("status");
-                            var content2 = document.createTextNode("Anulada");
-                            theDiv2.appendChild(content2);
-                        }else if(data.data.status == "DECLINED"){
-                            var theDiv2 = document.getElementById("status");
-                            var content2 = document.createTextNode("Rechazada");
-                            theDiv2.appendChild(content2);
-                        }else if(data.data.status == "PENDING"){
-                            var theDiv2 = document.getElementById("status");
-                            var content2 = document.createTextNode("Pendiente");
-                            theDiv2.appendChild(content2);
-                        }else{
-                            var theDiv2 = document.getElementById("status");
-                            var content2 = document.createTextNode("Error Desconocido");
-                            theDiv2.appendChild(content2);
-                        }
+                        $.ajax({
+                            type : 'POST',
+                            url  : 'bk_pay.php',
+                            data : {reference:reference, saldo:saldo, status:status, transactionId:transactionId, pasarela:'PayU'},
+                            success : function(data){
+                                Swal.fire({
+                                    title: data.title,
+                                    icon: data.icon,
+                                    showCancelButton: false,
+                                    showConfirmButton: false,
+                                    cancelButtonColor: '#d33',
+                                    cancelButtonText: 'Aceptar',
+                                    timer: 10000
+                                });
+                                cargando(false);
+                            }
+                        });
+                    <?php } ?>
 
-                        var theDiv3 = document.getElementById("referencia");
-                        var content3 = document.createTextNode(data.data.reference);
-                        theDiv3.appendChild(content3);
-                        var reference = data.data.reference;
-                        var saldo = (parseInt(data.data.amount_in_cents/100) - parseInt(0)) + ".00";
-                        var transactionId = data.data.id;
-                        var status = data.data.status;
-
-                        let referencia = data.data.reference.split('-')[1];
-                        $("#referencia").html(referencia);
-
-                        if(data.data.status == "APPROVED"){
-                            $.ajax({
-                                type : 'POST',
-                                url  : 'bk_pay.php',
-                                data : {reference:referencia, saldo:saldo, status:status, transactionId:transactionId, pasarela: 'Wompi'},
-                                success : function(data){
-                                    Swal.fire({
-                                        title: data.title,
-                                        icon: data.icon,
-                                        showCancelButton: false,
-                                        showConfirmButton: false,
-                                        cancelButtonColor: '#d33',
-                                        cancelButtonText: 'Aceptar',
-                                        timer: 10000
-                                    });
-                                }
-                            });
-                        }else if(data.data.status == "VOIDED"){
-                            Swal.fire({
-                                title: 'Transacción Wompi Anulada',
-                                icon: 'error',
-                                showCancelButton: false,
-                                showConfirmButton: false,
-                                cancelButtonColor: '#d33',
-                                cancelButtonText: 'Aceptar',
-                                timer: 10000
-                            });
-                        }else if(data.data.status == "DECLINED"){
-                            Swal.fire({
-                                title: 'Transacción Wompi Rechazada',
-                                icon: 'error',
-                                showCancelButton: false,
-                                showConfirmButton: false,
-                                cancelButtonColor: '#d33',
-                                cancelButtonText: 'Aceptar',
-                                timer: 10000
-                            });
-                        }else if(data.data.status == "PENDING"){
-                            Swal.fire({
-                                title: 'Transacción Wompi Pendiente',
-                                icon: 'warning',
-                                showCancelButton: false,
-                                showConfirmButton: false,
-                                cancelButtonColor: '#d33',
-                                cancelButtonText: 'Aceptar',
-                                timer: 10000
-                            });
-                        }else{
-                            Swal.fire({
-                                title: 'Error Desconocido',
-                                icon: 'error',
-                                showCancelButton: false,
-                                showConfirmButton: false,
-                                cancelButtonColor: '#d33',
-                                cancelButtonText: 'Aceptar',
-                                timer: 10000
-                            });
-                        }
-                        cargando(false);
-                    }
-                });
+                    <?php if ($_REQUEST['transactionState'] == 6 || $_REQUEST['transactionState'] == 104 || $_REQUEST['transactionState'] == 7) { ?>
+                        Swal.fire({
+                            title: '<?php echo $estadoTx; ?>',
+                            text: '<?=$name_empresa;?>',
+                            icon: 'warning',
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                            cancelButtonColor: '#d33',
+                            cancelButtonText: 'Aceptar',
+                            timer: 10000
+                        });
+                    <?php } ?>
+                <?php }else{ ?>
+                    Swal.fire({
+                        title: 'ERROR VALIDANDO LA FIRMA DIGITAL',
+                        text: 'Por favor comuníquese con la administración de <?=$name_empresa;?>',
+                        icon: 'error',
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                        cancelButtonColor: '#d33',
+                        cancelButtonText: 'Aceptar',
+                        timer: 10000
+                    });
+                <?php } ?>
                 return false;
             });
         </script>

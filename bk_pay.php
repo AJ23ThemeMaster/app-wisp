@@ -12,20 +12,31 @@
         $saldo         = strip_tags($_POST['saldo']);
         $reference     = strip_tags($_POST['reference']);
         $transactionId = strip_tags($_POST['transactionId']);
+        $pasarela      = strip_tags($_POST['pasarela']);
         $fecha         = date('Y-m-d');
-        
+
         if(!empty($_POST['status'])){
             $status = strip_tags($_POST['status']);
         }
-        
-        if($status != 'APPROVED'){
-            $json['success'] = 'false';
-            $json['title']   = 'Ha ocurrido un error, comuniquese con la administración del sistema';
-            $json['icon']    = 'error';
-            echo json_encode($json);
-            exit;
+
+        if($pasarela == 'Wompi'){
+            if($status != 'APPROVED'){
+                $json['success'] = 'false';
+                $json['title']   = 'Ha ocurrido un error, comuniquese con la administración del sistema';
+                $json['icon']    = 'error';
+                echo json_encode($json);
+                exit;
+            }
+        }elseif($pasarela == 'PayU'){
+            if($status != '4'){
+                $json['success'] = 'false';
+                $json['title']   = 'Ha ocurrido un error, comuniquese con la administración del sistema';
+                $json['icon']    = 'error';
+                echo json_encode($json);
+                exit;
+            }
         }
-        
+
         //FACTURA
         $query = "SELECT * FROM factura WHERE codigo = '$reference'";
         $result_query = mysqli_query($con,$query);
@@ -33,10 +44,15 @@
         $factura = $assoc_f['id'];
         $cliente = $assoc_f['cliente'];
         $estatus = $assoc_f['estatus'];
-        
+
         if($estatus == 1){
             //BANCO
-            $query = "SELECT * FROM bancos WHERE nombre = 'WOMPI' AND estatus = 1 AND lectura = 1";
+            if($pasarela == 'wompi'){
+                $query = "SELECT * FROM bancos WHERE nombre = 'WOMPI' AND estatus = 1 AND lectura = 1";
+            }elseif($pasarela == 'payu'){
+                $query = "SELECT * FROM bancos WHERE nombre = 'PAYU' AND estatus = 1 AND lectura = 1";
+            }
+
             $banco = mysqli_fetch_assoc(mysqli_query($con, $query));
             $banco = $banco['id'];
 
@@ -46,9 +62,9 @@
             $assoc_n = mysqli_fetch_assoc($result_query);
             $nro = $assoc_n['nro'];
             $nro++;
-            
+
             //REGISTRO DEL INGRESO
-            $query = "INSERT INTO ingresos (nro, empresa, cliente, cuenta, metodo_pago, fecha, observaciones, tipo, estatus) VALUES ('$nro', '1', '$cliente', '$banco', '9', '$fecha', 'Pago Wompi ID: $transactionId', '1', '1')";
+            $query = "INSERT INTO ingresos (nro, empresa, cliente, cuenta, metodo_pago, fecha, observaciones, tipo, estatus) VALUES ('$nro', '1', '$cliente', '$banco', '9', '$fecha', 'Pago $pasarela ID: $transactionId', '1', '1')";
             mysqli_query($con,$query);
             
             $query = "SELECT MAX(id) AS id FROM ingresos";

@@ -297,7 +297,7 @@
                                             </form>
                                             <button class="btn btn-success d-none" onclick="confirmar('form-wompi', 'WOMPI');" id="btn_wompi">Pagar con Wompi</button>
 
-                                            <form method="post" action="https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/" id="form-payu" class="d-none">
+                                            <form method="post" action="https://checkout.payulatam.com/ppp-web-gateway-payu/" id="form-payu" class="d-none">
                                                 <input id="merchantId"      name="merchantId"      type="hidden"  value="">
                                                 <input id="accountId"       name="accountId"       type="hidden"  value="">
                                                 <input id="description"     name="description"     type="hidden"  value="">
@@ -394,21 +394,22 @@
                                 $("#redirect_url_wompi").val('https://'+window.location.hostname+'/wompi.php');
                                 $("#btn_wompi").removeClass('d-none');
                             }else if(value.nombre == 'PayU'){
+                                var amount = (((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio)*1);
                                 $("#merchantId").val(value.merchantId);
                                 $("#accountId").val(value.accountId);
                                 $("#description").val('Factura '+data.factura.codigo);
                                 $("#referenceCode").val('<?=$nom_empresa;?>-'+data.factura.codigo);
-                                $("#amount").val(data.factura.precio*1);
+                                $("#amount").val(amount);
                                 $("#tax").val(number_format(((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100), '2', '.', ''));
                                 $("#buyerFullName").val(data.cliente.nombre);
                                 $("#buyerEmail").val(data.cliente.email);
                                 $("#telephone").val(data.cliente.celular);
-                                $("#responseUrl").val('https://'+window.location.hostname+'/wompi.php');
+                                $("#responseUrl").val('https://'+window.location.hostname+'/payu.php');
                                 var str = window.location.hostname;
                                 $("#confirmationUrl").val('https://'+str.slice(4)+'/software/api/pagos/payu');
                                 $("#btn_payu").removeClass('d-none');
-                                //var md5 = $.md5('value');
-                                $("#signature").val($.md5(value.api_key+"~"+value.merchantId+"~<?=$nom_empresa;?>-"+data.factura.codigo+"~"+data.factura.precio*1+"~COP"));
+
+                                $("#signature").val($.md5(value.api_key+"~"+value.merchantId+"~<?=$nom_empresa;?>-"+data.factura.codigo+"~"+amount*1+"~COP"));
                             }
                         });
                     }
