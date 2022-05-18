@@ -334,6 +334,7 @@
                                     });
                                 }
                             });
+                            cargando(false);
                         }else if(data.data.x_transaction_state == "Fallida"){
                             Swal.fire({
                                 title: 'Transacción Fallida',
@@ -344,6 +345,7 @@
                                 cancelButtonText: 'Aceptar',
                                 timer: 10000
                             });
+                            cargando(false);
                         }else if(data.data.x_transaction_state == "Rechazada"){
                             Swal.fire({
                                 title: 'Transacción Rechazada',
@@ -354,6 +356,7 @@
                                 cancelButtonText: 'Aceptar',
                                 timer: 10000
                             });
+                            cargando(false);
                         }else if(data.data.x_transaction_state == "PENDING"){
                             Swal.fire({
                                 title: 'Transacción Pendiente',
@@ -364,6 +367,7 @@
                                 cancelButtonText: 'Aceptar',
                                 timer: 10000
                             });
+                            cargando(false);
                         }else{
                             Swal.fire({
                                 title: 'Error Desconocido',
@@ -374,8 +378,8 @@
                                 cancelButtonText: 'Aceptar',
                                 timer: 10000
                             });
+                            cargando(false);
                         }
-                        cargando(false);
                     }
                 });
                 return false;
