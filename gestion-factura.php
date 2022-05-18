@@ -323,7 +323,7 @@
                                                 class="epayco-button"
                                                 data-epayco-currency="cop"
                                                 data-epayco-country="co"
-                                                data-epayco-test="false"
+                                                data-epayco-test="true"
                                                 data-epayco-external="true"
                                                 data-epayco-response="https://ejemplo.com/respuesta.html"
                                                 data-epayco-confirmation="https://ejemplo.com/confirmacion"
