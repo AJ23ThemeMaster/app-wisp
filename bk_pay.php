@@ -35,6 +35,14 @@
                 echo json_encode($json);
                 exit;
             }
+        }elseif($pasarela == 'ePayco'){
+            if($status != 'Aceptada'){
+                $json['success'] = 'false';
+                $json['title']   = 'Ha ocurrido un error, comuniquese con la administración del sistema';
+                $json['icon']    = 'error';
+                echo json_encode($json);
+                exit;
+            }
         }
 
         //FACTURA
@@ -47,10 +55,12 @@
 
         if($estatus == 1){
             //BANCO
-            if($pasarela == 'wompi'){
+            if($pasarela == 'Wompi'){
                 $query = "SELECT * FROM bancos WHERE nombre = 'WOMPI' AND estatus = 1 AND lectura = 1";
-            }elseif($pasarela == 'payu'){
+            }elseif($pasarela == 'PayU'){
                 $query = "SELECT * FROM bancos WHERE nombre = 'PAYU' AND estatus = 1 AND lectura = 1";
+            }elseif($pasarela == 'ePayco'){
+                $query = "SELECT * FROM bancos WHERE nombre = 'EPAYCO' AND estatus = 1 AND lectura = 1";
             }
 
             $banco = mysqli_fetch_assoc(mysqli_query($con, $query));

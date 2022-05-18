@@ -317,6 +317,21 @@
                                             </form>
                                             <button class="btn btn-success d-none" onclick="confirmar('form-payu', 'PayU');" id="btn_payu">Pagar con PayU</button>
 
+                                            <form id="form-epayco" class="d-none">
+                                                <script
+                                                src="https://checkout.epayco.co/checkout.js"
+                                                class="epayco-button"
+                                                data-epayco-currency="cop"
+                                                data-epayco-country="co"
+                                                data-epayco-test="false"
+                                                data-epayco-external="true"
+                                                data-epayco-response="https://ejemplo.com/respuesta.html"
+                                                data-epayco-confirmation="https://ejemplo.com/confirmacion"
+                                                data-epayco-methodconfirmation="post"
+                                                id="script_epayco">
+                                                </script>
+                                            </form>
+                                            <button class="btn btn-success d-none" onclick="confirmar('form-epayco', 'ePayco');" id="btn_epayco">Pagar con ePayco</button>
                                         </center>
                                     </main>
                                 </div>
@@ -410,6 +425,22 @@
                                 $("#btn_payu").removeClass('d-none');
 
                                 $("#signature").val($.md5(value.api_key+"~"+value.merchantId+"~<?=$nom_empresa;?>-"+data.factura.codigo+"~"+amount*1+"~COP"));
+                            }else if(value.nombre == 'ePayco'){
+                                var amount = (((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio)*1);
+                                var str = window.location.hostname;
+
+                                $("#script_epayco").attr('data-epayco-key', value.api_key)
+                                .attr('data-epayco-amount', amount)
+                                .attr('data-epayco-name', '<?=$nom_empresa;?>-'+data.factura.codigo)
+                                .attr('data-epayco-description', '<?=$nom_empresa;?>-'+data.factura.codigo)
+                                .attr('data-epayco-email-billing', data.cliente.email)
+                                .attr('data-epayco-name-billing', data.cliente.nombre)
+                                .attr('data-epayco-address-billing', data.cliente.direccion)
+                                .attr('data-epayco-mobilephone-billing', data.cliente.celular)
+                                .attr('data-epayco-number-doc-billing', data.cliente.nit)
+                                .attr('data-epayco-response', 'https://'+window.location.hostname+'/app-wisp/epayco.php')
+                                .attr('data-epayco-confirmation', 'https://'+str.slice(4)+'/software/api/pagos/epayco');
+                                $("#btn_epayco").removeClass('d-none');
                             }
                         });
                     }
@@ -429,8 +460,12 @@
                     cancelButtonColor: '#d33',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        document.getElementById(form).submit();
                         cargando(true);
+                        if(form == 'form-epayco'){
+                            $(".epayco-button-render").click();
+                        }else{
+                            document.getElementById(form).submit();
+                        }
                     }
                 })
             }
