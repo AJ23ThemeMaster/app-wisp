@@ -93,6 +93,10 @@
         .sidebar .nav .nav-item.active > .nav-link {
             background: <?= $color;?>;
         }
+        .swal2-modal .swal2-icon, .swal2-modal .swal2-success-ring {
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
     </style>
     <script>
         function cargando(abierta){
