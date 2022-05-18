@@ -438,7 +438,7 @@
                                 .attr('data-epayco-address-billing', data.cliente.direccion)
                                 .attr('data-epayco-mobilephone-billing', data.cliente.celular)
                                 .attr('data-epayco-number-doc-billing', data.cliente.nit)
-                                .attr('data-epayco-response', 'https://'+window.location.hostname+'/app-wisp/epayco.php')
+                                .attr('data-epayco-response', 'https://'+window.location.hostname+'/epayco.php')
                                 .attr('data-epayco-confirmation', 'https://'+str.slice(4)+'/software/api/pagos/epayco');
                                 $("#btn_epayco").removeClass('d-none');
                             }
