@@ -332,9 +332,9 @@
                                         cancelButtonText: 'Aceptar',
                                         timer: 10000
                                     });
+                                    cargando(false);
                                 }
                             });
-                            cargando(false);
                         }else if(data.data.x_transaction_state == "Fallida"){
                             Swal.fire({
                                 title: 'Transacción Fallida',
