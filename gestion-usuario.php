@@ -5,7 +5,7 @@
     session_start();
     if (isset($_SESSION['logueado']) && $_SESSION['logueado']) {
         $usuario_actual = $_SESSION['username'];
-        $cliente_actual = "SELECT usuarios_app.id_cliente, contactos.nombre FROM usuarios_app JOIN contactos ON usuarios_app.id_cliente = contactos.id WHERE usuarios_app.user = '$usuario_actual'";
+        $cliente_actual = "SELECT usuarios_app.id_cliente, concat_ws(' ', contactos.nombre, contactos.apellido1, contactos.apellido2) as nombre FROM usuarios_app JOIN contactos ON usuarios_app.id_cliente = contactos.id WHERE usuarios_app.user = '$usuario_actual'";
         $result_cliente = mysqli_query($con,$cliente_actual);
         $assoc_cliente  = mysqli_fetch_assoc($result_cliente);
         $cliente        = $assoc_cliente['id_cliente'];

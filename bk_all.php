@@ -8,7 +8,7 @@
 
         $plan = "SELECT p.name plan, p.price precio, p.download bajada, p.upload subida FROM usuarios_app AS u JOIN contracts AS cs ON u.uid_cliente = cs.client_id JOIN planes_velocidad AS p ON p.id = cs.plan_id WHERE u.id_cliente = '$id_cliente'";
         $contrato = "SELECT cs.id, cs.server_configuration_id, cs.fecha_corte, cs.fecha_suspension, cs.state, cs.ip, cs.mac_address FROM usuarios_app AS u JOIN contracts AS cs ON u.uid_cliente = cs.client_id WHERE u.id_cliente = '$id_cliente'";
-        $cliente = "SELECT c.nombre, c.nit, c.direccion, c.celular, c.email FROM contactos AS c WHERE c.id = '$id_cliente'";
+        $cliente = "SELECT concat_ws(' ', c.nombre, c.apellido1, c.apellido2) as nombre, c.nit, c.tip_iden, c.direccion, c.celular, c.email FROM contactos AS c WHERE c.id = '$id_cliente'";
         $wifi = "SELECT * FROM wifi WHERE id_cliente = '$id_cliente' ORDER BY id DESC";
         $red = "SELECT * FROM wifi WHERE id_cliente = '$id_cliente' AND status = 0 ORDER BY id DESC";
         $factura = "SELECT F.*, I.precio, I.impuesto, I.cant, I.ref FROM factura AS F JOIN items_factura AS I ON F.id = I.factura WHERE F.cliente = '$id_cliente' AND F.estatus = 1 ORDER BY F.id DESC LIMIT 1";
