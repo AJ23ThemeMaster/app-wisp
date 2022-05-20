@@ -5,7 +5,7 @@
     session_start();
     if (isset($_SESSION['logueado']) && $_SESSION['logueado']) {
         $usuario_actual = $_SESSION['username'];
-        $cliente_actual = "SELECT usuarios_app.id_cliente, contactos.nombre FROM usuarios_app JOIN contactos ON usuarios_app.id_cliente = contactos.id WHERE usuarios_app.user = '$usuario_actual'";
+        $cliente_actual = "SELECT usuarios_app.id_cliente, concat_ws(' ', contactos.nombre, contactos.apellido1, contactos.apellido2) as nombre FROM usuarios_app JOIN contactos ON usuarios_app.id_cliente = contactos.id WHERE usuarios_app.user = '$usuario_actual'";
         $result_cliente = mysqli_query($con,$cliente_actual);
         $assoc_cliente  = mysqli_fetch_assoc($result_cliente);
         $cliente        = $assoc_cliente['id_cliente'];
@@ -332,6 +332,9 @@
                                                 </script>
                                             </form>
                                             <button class="btn btn-success d-none" onclick="confirmar('form-epayco', 'ePayco');" id="btn_epayco">Pagar con ePayco</button>
+
+                                            <button class="btn btn-success d-none" onclick="confirmar('form-combopay', 'ComboPay');" id="btn_combopay">Pagar con ComboPay</button>
+                                            <a class="d-none" id="a_combopay"></a>
                                         </center>
                                     </main>
                                 </div>
@@ -441,6 +444,36 @@
                                 .attr('data-epayco-response', 'https://'+window.location.hostname+'/epayco.php')
                                 .attr('data-epayco-confirmation', 'https://'+str.slice(4)+'/software/api/pagos/epayco');
                                 $("#btn_epayco").removeClass('d-none');
+                            }else if(value.nombre == 'ComboPay'){
+                                var token = {
+                                    "url": "https://api.combopay.co/api/oauth/token?grant_type=password&client_secret="+value.merchantId+"&username="+value.user+"&password="+value.pass+"&client_id="+value.accountId,
+                                    "method": "POST",
+                                    "timeout": 0,
+                                };
+                                $.ajax(token).done(function (response) {
+                                    if(response.access_token){
+                                        var amount = (((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio)*1);
+                                        var str = window.location.hostname;
+
+                                        if(data.cliente.tip_iden==3){ var tip_iden = 'CC'; }else if(data.cliente.tip_iden==6){ var tip_iden = 'NIT'; }
+
+                                        var link = {
+                                            "url": "https://api.combopay.co/api/invoice-company-customer?value="+amount+"&description="+data.factura.codigo+"&invoice=<?=$nom_empresa;?>-"+data.factura.codigo+"&url_data_return=https://"+str.slice(4)+"/software/api/pagos/epayco&url_client_redirect=https://"+str+"/combopay.php&name="+data.cliente.nombre+"&document_type="+tip_iden+"&phone_number="+data.cliente.celular+"&email="+data.cliente.email,
+                                            "method": "POST",
+                                            "timeout": 0,
+                                            "headers": {
+                                                "Authorization": "Bearer "+response.access_token+""
+                                            },
+                                        };
+
+                                        $.ajax(link).done(function (response) {
+                                            if(response.payment_link){
+                                                $("#btn_combopay").removeClass('d-none');
+                                                $("#a_combopay").attr('href', response.payment_link);
+                                            }
+                                        });
+                                    }
+                                });
                             }
                         });
                     }
@@ -463,6 +496,8 @@
                         cargando(true);
                         if(form == 'form-epayco'){
                             $(".epayco-button-render").click();
+                        }else if(form == 'form-combopay'){
+                            $("#a_combopay")[0].click();
                         }else{
                             document.getElementById(form).submit();
                         }
