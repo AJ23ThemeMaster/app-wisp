@@ -459,7 +459,7 @@
                                             if(data.cliente.tip_iden==3){ var tip_iden = 'CC'; }else if(data.cliente.tip_iden==6){ var tip_iden = 'NIT'; }
 
                                             var link = {
-                                                "url": "https://api.combopay.co/api/invoice-company-customer?value="+amount+"&description="+data.factura.codigo+"&invoice=<?=$nom_empresa;?>-"+data.factura.codigo+"&url_data_return=https://"+str.slice(4)+"/software/api/pagos/epayco&url_client_redirect=https://"+str+"/combopay.php&name="+data.cliente.nombre+"&document_type="+tip_iden+"&customer_phone_number="+data.cliente.celular+"&email="+data.cliente.email+"&document="+data.cliente.nit+"&customer_address="+data.cliente.direccion,
+                                                "url": "https://api.combopay.co/api/invoice-company-customer?value="+amount+"&description="+data.factura.codigo+"&invoice=<?=$nom_empresa;?>-"+data.factura.codigo+"&url_data_return=https://"+str.slice(4)+"/software/api/pagos/combopay&url_client_redirect=https://"+str+"/gestion-factura.php&name="+data.cliente.nombre+"&document_type="+tip_iden+"&customer_phone_number="+data.cliente.celular+"&email="+data.cliente.email+"&document="+data.cliente.nit+"&customer_address="+data.cliente.direccion,
                                                 "method": "POST",
                                                 "timeout": 0,
                                                 "headers": {
