@@ -406,76 +406,78 @@
                             $("#invoice").removeClass('d-none');
                         }
 
-                        $.each(data.pasarelas, function(index, value){
-                            if(value.nombre == 'WOMPI'){
-                                $("#public_key_wompi").val(value.api_key);
-                                $("#redirect_url_wompi").val('https://'+window.location.hostname+'/wompi.php');
-                                $("#btn_wompi").removeClass('d-none');
-                            }else if(value.nombre == 'PayU'){
-                                var amount = (((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio)*1);
-                                $("#merchantId").val(value.merchantId);
-                                $("#accountId").val(value.accountId);
-                                $("#description").val('Factura '+data.factura.codigo);
-                                $("#referenceCode").val('<?=$nom_empresa;?>-'+data.factura.codigo);
-                                $("#amount").val(amount);
-                                $("#tax").val(number_format(((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100), '2', '.', ''));
-                                $("#buyerFullName").val(data.cliente.nombre);
-                                $("#buyerEmail").val(data.cliente.email);
-                                $("#telephone").val(data.cliente.celular);
-                                $("#responseUrl").val('https://'+window.location.hostname+'/payu.php');
-                                var str = window.location.hostname;
-                                $("#confirmationUrl").val('https://'+str.slice(4)+'/software/api/pagos/payu');
-                                $("#btn_payu").removeClass('d-none');
+                        if(data.factura){
+                            $.each(data.pasarelas, function(index, value){
+                                if(value.nombre == 'WOMPI'){
+                                    $("#public_key_wompi").val(value.api_key);
+                                    $("#redirect_url_wompi").val('https://'+window.location.hostname+'/wompi.php');
+                                    $("#btn_wompi").removeClass('d-none');
+                                }else if(value.nombre == 'PayU'){
+                                    var amount = (((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio)*1);
+                                    $("#merchantId").val(value.merchantId);
+                                    $("#accountId").val(value.accountId);
+                                    $("#description").val('Factura '+data.factura.codigo);
+                                    $("#referenceCode").val('<?=$nom_empresa;?>-'+data.factura.codigo);
+                                    $("#amount").val(amount);
+                                    $("#tax").val(number_format(((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100), '2', '.', ''));
+                                    $("#buyerFullName").val(data.cliente.nombre);
+                                    $("#buyerEmail").val(data.cliente.email);
+                                    $("#telephone").val(data.cliente.celular);
+                                    $("#responseUrl").val('https://'+window.location.hostname+'/payu.php');
+                                    var str = window.location.hostname;
+                                    $("#confirmationUrl").val('https://'+str.slice(4)+'/software/api/pagos/payu');
+                                    $("#btn_payu").removeClass('d-none');
 
-                                $("#signature").val($.md5(value.api_key+"~"+value.merchantId+"~<?=$nom_empresa;?>-"+data.factura.codigo+"~"+amount*1+"~COP"));
-                            }else if(value.nombre == 'ePayco'){
-                                var amount = (((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio)*1);
-                                var str = window.location.hostname;
+                                    $("#signature").val($.md5(value.api_key+"~"+value.merchantId+"~<?=$nom_empresa;?>-"+data.factura.codigo+"~"+amount*1+"~COP"));
+                                }else if(value.nombre == 'ePayco'){
+                                    var amount = (((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio)*1);
+                                    var str = window.location.hostname;
 
-                                $("#script_epayco").attr('data-epayco-key', value.api_key)
-                                .attr('data-epayco-amount', amount)
-                                .attr('data-epayco-name', '<?=$nom_empresa;?>-'+data.factura.codigo)
-                                .attr('data-epayco-description', '<?=$nom_empresa;?>-'+data.factura.codigo)
-                                .attr('data-epayco-email-billing', data.cliente.email)
-                                .attr('data-epayco-name-billing', data.cliente.nombre)
-                                .attr('data-epayco-address-billing', data.cliente.direccion)
-                                .attr('data-epayco-mobilephone-billing', data.cliente.celular)
-                                .attr('data-epayco-number-doc-billing', data.cliente.nit)
-                                .attr('data-epayco-response', 'https://'+window.location.hostname+'/epayco.php')
-                                .attr('data-epayco-confirmation', 'https://'+str.slice(4)+'/software/api/pagos/epayco');
-                                $("#btn_epayco").removeClass('d-none');
-                            }else if(value.nombre == 'ComboPay'){
-                                var token = {
-                                    "url": "https://api.combopay.co/api/oauth/token?grant_type=password&client_secret="+value.merchantId+"&username="+value.user+"&password="+value.pass+"&client_id="+value.accountId,
-                                    "method": "POST",
-                                    "timeout": 0,
-                                };
-                                $.ajax(token).done(function (response) {
-                                    if(response.access_token){
-                                        var amount = (((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio)*1);
-                                        var str = window.location.hostname;
+                                    $("#script_epayco").attr('data-epayco-key', value.api_key)
+                                    .attr('data-epayco-amount', amount)
+                                    .attr('data-epayco-name', '<?=$nom_empresa;?>-'+data.factura.codigo)
+                                    .attr('data-epayco-description', '<?=$nom_empresa;?>-'+data.factura.codigo)
+                                    .attr('data-epayco-email-billing', data.cliente.email)
+                                    .attr('data-epayco-name-billing', data.cliente.nombre)
+                                    .attr('data-epayco-address-billing', data.cliente.direccion)
+                                    .attr('data-epayco-mobilephone-billing', data.cliente.celular)
+                                    .attr('data-epayco-number-doc-billing', data.cliente.nit)
+                                    .attr('data-epayco-response', 'https://'+window.location.hostname+'/epayco.php')
+                                    .attr('data-epayco-confirmation', 'https://'+str.slice(4)+'/software/api/pagos/epayco');
+                                    $("#btn_epayco").removeClass('d-none');
+                                }else if(value.nombre == 'ComboPay'){
+                                    var token = {
+                                        "url": "https://api.combopay.co/api/oauth/token?grant_type=password&client_secret="+value.merchantId+"&username="+value.user+"&password="+value.pass+"&client_id="+value.accountId,
+                                        "method": "POST",
+                                        "timeout": 0,
+                                    };
+                                    $.ajax(token).done(function (response) {
+                                        if(response.access_token){
+                                            var amount = (((parseFloat(data.factura.precio) * parseFloat(data.factura.impuesto))/100)+parseFloat(data.factura.precio)*1);
+                                            var str = window.location.hostname;
 
-                                        if(data.cliente.tip_iden==3){ var tip_iden = 'CC'; }else if(data.cliente.tip_iden==6){ var tip_iden = 'NIT'; }
+                                            if(data.cliente.tip_iden==3){ var tip_iden = 'CC'; }else if(data.cliente.tip_iden==6){ var tip_iden = 'NIT'; }
 
-                                        var link = {
-                                            "url": "https://api.combopay.co/api/invoice-company-customer?value="+amount+"&description="+data.factura.codigo+"&invoice=<?=$nom_empresa;?>-"+data.factura.codigo+"&url_data_return=https://"+str.slice(4)+"/software/api/pagos/epayco&url_client_redirect=https://"+str+"/combopay.php&name="+data.cliente.nombre+"&document_type="+tip_iden+"&phone_number="+data.cliente.celular+"&email="+data.cliente.email,
-                                            "method": "POST",
-                                            "timeout": 0,
-                                            "headers": {
-                                                "Authorization": "Bearer "+response.access_token+""
-                                            },
-                                        };
+                                            var link = {
+                                                "url": "https://api.combopay.co/api/invoice-company-customer?value="+amount+"&description="+data.factura.codigo+"&invoice=<?=$nom_empresa;?>-"+data.factura.codigo+"&url_data_return=https://"+str.slice(4)+"/software/api/pagos/epayco&url_client_redirect=https://"+str+"/combopay.php&name="+data.cliente.nombre+"&document_type="+tip_iden+"&customer_phone_number="+data.cliente.celular+"&email="+data.cliente.email+"&document="+data.cliente.nit+"&customer_address="+data.cliente.direccion,
+                                                "method": "POST",
+                                                "timeout": 0,
+                                                "headers": {
+                                                    "Authorization": "Bearer "+response.access_token+""
+                                                },
+                                            };
 
-                                        $.ajax(link).done(function (response) {
-                                            if(response.payment_link){
-                                                $("#btn_combopay").removeClass('d-none');
-                                                $("#a_combopay").attr('href', response.payment_link);
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
+                                            $.ajax(link).done(function (response) {
+                                                if(response.payment_link){
+                                                    $("#btn_combopay").removeClass('d-none');
+                                                    $("#a_combopay").attr('href', response.payment_link);
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     }
                 });
                 return false;
