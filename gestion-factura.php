@@ -472,6 +472,28 @@
                                                     $("#btn_combopay").removeClass('d-none');
                                                     $("#a_combopay").attr('href', response.payment_link);
                                                 }
+                                            }).fail(function(response) {
+                                                data=JSON.parse(response.responseText);
+                                                var message = '';
+
+                                                $.each(data.errors, function(i, item) {
+                                                    if(i == 'document_type'){
+                                                        message += '- El tipo de documento indicado no es válido.<br>';
+                                                    }else if(i == 'email'){
+                                                        message += '- El correo electrónico debe ser una dirección de correo electrónico válida.<br>';
+                                                    }
+                                                });
+
+                                                Swal.fire({
+                                                    title: 'COMBOPAY',
+                                                    html: message,
+                                                    type: 'error',
+                                                    showCancelButton: false,
+                                                    showConfirmButton: false,
+                                                    cancelButtonColor: '#d33',
+                                                    cancelButtonText: 'Cancelar',
+                                                    timer: 20000
+                                                });
                                             });
                                         }
                                     });
